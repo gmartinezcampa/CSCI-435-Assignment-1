@@ -5,8 +5,8 @@
 // This file is going to be used to draw the yellow boxes on pictures based on coordinates from parsingXML.c
 //
 //
-#include <MagickWand/MagickWand.h>
 #include <stdio.h>
+#include "annotatingPics.h"
 
 void drawYellowBox(MagickWand *wand, int x, int y, int width, int height) {
     DrawingWand *drawingWand = NewDrawingWand();

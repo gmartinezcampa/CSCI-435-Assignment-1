@@ -7,15 +7,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-
-// Define a structure to hold the leaf element information
-typedef struct {
-    char id[64];
-    int x; // Starting coordinates
-    int y;
-    int width; // Length and height of the boxes
-    int height;
-} LeafElement;
+#include "parsingXML.h"
 
 // Helps extract nunbers from a string
 int extractInt(const char* str, const char* key) {

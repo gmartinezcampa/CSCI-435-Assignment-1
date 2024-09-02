@@ -5,8 +5,8 @@
 // In this program, I will be using the ImageMagick API to create yellow, dashed boxes around the leaf components
 // of a GUI (represented by a screenshot) by parsing information from a corresponding xml file.
 
-#include "parsingXML.c"
-#include "annotatingPics.c"
+#include "parsingXML.h"
+#include "annotatingPics.h"
 #include <stdio.h>
 #include <string.h>
 #include <dirent.h>
