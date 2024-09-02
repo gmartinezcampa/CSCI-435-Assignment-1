@@ -5,23 +5,20 @@
 // In this program, I will be using the ImageMagick API to create yellow, dashed boxes around the leaf components
 // of a GUI (represented by a screenshot) by parsing information from a corresponding xml file.
 
+#include "parsingXML.c"
+#include "annotatingPics.c"
 #include <stdio.h>
 #include <string.h>
 #include <dirent.h>
-#include <sys/stat.h>
-#include <MagickWand/MagickWand.h>
+
+
 
 int main(int argc, char *argv[])
 {
     // This will iterate through the xml and png files to find the corresponding pairs
-    // This will then change the
-
-    MagickWand* wand;
-    DrawingWand* drawingWand;
-    PixelWand* pixelWand;
+    // Then call methods to parse xml files and annotate pictures
     DIR* dir;
     struct dirent* entry;
-    struct stat st;
     char inputFile[128];
     char outputFile[128];
     char arrayFilePairs[10][2][128] = {{{'\0'}}};
@@ -44,7 +41,7 @@ int main(int argc, char *argv[])
 
     
     fileIndex = 0;
-    char noExt[64];
+    char noExt[128];
     // Iterating over all files in directory to seperate pairs and extentions
     while ((entry = readdir(dir)) != NULL)
     {
@@ -53,13 +50,6 @@ int main(int argc, char *argv[])
         if (entry->d_name[0] == '.') {
             continue;
         }
-
-        // // Skip files that are too short to have a proper extension
-        // int size = strlen(entry->d_name);
-        // if (size <= 4) {
-        //     continue;
-        // }
-
 
         snprintf(inputFile, sizeof(inputFile), "%s/%s", argv[1], entry->d_name); //This is the full file path
         int size = strlen(entry->d_name);
@@ -84,14 +74,7 @@ int main(int argc, char *argv[])
         {
             continue;
         }
-        
 
-        // if (fileIndex == 0)
-        // {
-        //     arrayFilePairs[0][0] = inputFile;
-        //     fileIndex+=1
-        //     break;
-        // }
         for (int i = 0; i < 10; i++)
         {
             if (arrayFilePairs[i][0][0] == '\0') // Check if the first slot is empty
@@ -122,25 +105,47 @@ int main(int argc, char *argv[])
         fileIndex+=1; //make sure to go through all of the files in the directory
     }
 
-    // Printing to test if this workeds
-    for(int i = 0; i < 9; i++) 
+
+    for (int i = 0; i < 10; i++)
     {
-        printf("Pair %d: %s, %s\n", i, arrayFilePairs[i][0], arrayFilePairs[i][1]);
+        if (arrayFilePairs[i][0][0] != '\0' && arrayFilePairs[i][1][0] != '\0') // Only get array elements with file names
+        {
+            // Printing to test if this works
+            printf("Pair %d: %s, %s\n", i + 1, arrayFilePairs[i][0], arrayFilePairs[i][1]);
+
+            char* xmlFile, *pngFile;
+
+            if (strstr(arrayFilePairs[i][0], ".xml"))
+            {
+                xmlFile = arrayFilePairs[i][0];
+                pngFile = arrayFilePairs[i][1];
+            }
+            else
+            {
+                xmlFile = arrayFilePairs[i][1];
+                pngFile = arrayFilePairs[i][0];
+            }
+
+            // Parse XML and get leaf elements
+            LeafElement elements[100]; // In theory, this will contain all the work aster calling parseXML
+            int leafCount = parseXML(xmlFile, elements, 100);
+
+            char noPNGExt[128];
+            char* final;
+            char com[] = "com";
+
+            strncpy(noPNGExt, pngFile, strlen(pngFile) - 4);
+            noPNGExt[strlen(pngFile) - 4] = '\0'; // Don't want this running forever
+            
+            final = strstr(noPNGExt, com);
+
+            // Annotate the png file with yellow boxes
+            snprintf(outputFile, sizeof(outputFile), "%s_output.png", final);
+            annotateScreenshot(pngFile, outputFile, elements, leafCount);
+        }
     }
 
-    // // Copy the file name to overflow safe variable (I think?)
-    // strncpy(inputFile, argv[1], sizeof(inputFile) - 1);
-
-    // // This will get the file name without the extension by finding last occurance of . (which should be before the extension)
-    // lastDot = strrchr(inputFile, .);
-    // if (lastDot != NULL)
-    // {
-    //     *lastDot = '\0';
-    // }
-
-    // // Finally, put the file name without the extention in OutputFile
-    // snprintf(outputFile, sizeof(outputFile), "%s_output.png", inputFile)
-
+    closedir(dir);
 
 
     return 0;
