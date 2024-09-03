@@ -10,7 +10,7 @@
 
 # To compile, you must run the command
 
-gcc -o main main.c parsingXML.c annotatingPics.c `pkg-config --cflags --libs MagickWand`
+gcc -o main main.c parsingXML.c annotatingPics.c \`pkg-config --cflags --libs MagickWand\`
 
 # and then run the executable with this command
 
