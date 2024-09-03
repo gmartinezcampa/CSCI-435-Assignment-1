@@ -1,5 +1,5 @@
 #ifndef PARSINGXML_H
-#define PARSING_H
+#define PARSINGXML_H
 
 // Define a structure to hold the leaf element information
 typedef struct {
